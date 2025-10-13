@@ -27,6 +27,7 @@ public class PostsController {
                 .id( new PostId(IdGenerator.generateTSID()))
                 .body(input.getBody())
                 .title(input.getTitle())
+                .author(input.getAuthor())
                 .wordCount(Integer.valueOf(input.getBody().trim().length()))
                 .calculatedValue(Double.valueOf(0L))
                 .build();
