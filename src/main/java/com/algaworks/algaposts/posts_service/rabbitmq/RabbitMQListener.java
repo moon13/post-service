@@ -22,12 +22,11 @@ import static com.algaworks.algaposts.posts_service.rabbitmq.RabbitMQConfig.QUEU
 public class RabbitMQListener {
 
    // private final TemperatureMonitoringService temperatureMonitoringService;
-    //private final SensorAlertingService sensorAlertingServer;
 
 
     @SneakyThrows
     @RabbitListener(queues = QUEUE_PROCESS_POST, concurrency = "2-3")
-    public void handlePRocessingTemperature(@Payload PostOutput postOutput,
+    public void handleProcessingTemperature(@Payload PostOutput postOutput,
                        @Headers Map<String,Object> headers
 
     ){
@@ -35,16 +34,5 @@ public class RabbitMQListener {
        // temperatureMonitoringService.processTemperatureReading(temperatureLogData);
      //   Thread.sleep(Duration.ofSeconds(5));
     }
-/*
-    @SneakyThrows
-    @RabbitListener(queues = QUEUE_ALERTING, concurrency = "2-3")
-    public void handleAlerting(@Payload TemperatureLogData temperatureLogData,
-                       @Headers Map<String,Object> headers
 
-    ){
-         sensorAlertingServer.handleAlert(temperatureLogData);
-        //log.info("Alerting : SensorID{} Temp {}",temperatureLogData.getSensorId(),temperatureLogData.getValue());
-        Thread.sleep(Duration.ofSeconds(5));
-
-    }*/
 }
