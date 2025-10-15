@@ -36,6 +36,7 @@ public class RabbitMQConfig {
                 .build();
     }
 
+    @Bean
     public FanoutExchange exchange(){
         return ExchangeBuilder.fanoutExchange(
                 "post-processing.post-received.v1.e"
