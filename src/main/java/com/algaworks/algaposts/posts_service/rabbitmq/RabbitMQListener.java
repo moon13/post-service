@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
@@ -23,14 +24,23 @@ public class RabbitMQListener {
 
    // private final TemperatureMonitoringService temperatureMonitoringService;
 
+    private final RabbitTemplate rabbitTemplate;
+
 
     @SneakyThrows
     @RabbitListener(queues = QUEUE_PROCESS_POST, concurrency = "2-3")
-    public void handleProcessingTemperature(@Payload PostOutput postOutput,
+    public void handleProcessingPost(@Payload PostOutput postOutput,
                        @Headers Map<String,Object> headers
 
     ){
         log.info("Post updated. Postid {} Author {}", postOutput.getId(), postOutput.getAuthor());
+
+        String exchange = "post-processing.post-received.v1.e";
+        String routingKey = "";
+        Object payload = postOutput;
+
+        rabbitTemplate.convertAndSend(exchange, routingKey, payload);
+
        // temperatureMonitoringService.processTemperatureReading(temperatureLogData);
      //   Thread.sleep(Duration.ofSeconds(5));
     }

@@ -8,6 +8,7 @@ import com.algaworks.algaposts.posts_service.domain.model.Post;
 import com.algaworks.algaposts.posts_service.domain.model.PostId;
 import com.algaworks.algaposts.posts_service.domain.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,8 @@ public class PostsController {
 
     //private final SensorMonitoringClient sensorMonitoringClient;
     private final PostRepository postRepository;
+
+    private final RabbitTemplate rabbitTemplate;
 
 
     @PostMapping
@@ -34,7 +37,17 @@ public class PostsController {
 
         post = postRepository.saveAndFlush(post);
 
-        return convertToModel(post);
+        PostOutput postOutput = convertToModel(post);
+
+        String fila =  "text-processor-service.post-processing.v1.q";
+        String exchange = "post-processing.post-received.v1.e";
+        String routingKey = "";
+        Object payload = postOutput;
+
+        rabbitTemplate.convertAndSend(exchange, routingKey, payload);
+        //rabbitTemplate.convertAndSend(fila,payload);
+
+        return postOutput;
 
     }
 
