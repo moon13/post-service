@@ -35,6 +35,7 @@ public class RabbitMQListener {
     ){
         log.info("Post updated. Postid {} Author {}", postOutput.getId(), postOutput.getAuthor());
 
+        String fila =  "text-processor-service.post-processing.v1.q";
         String exchange = "post-processing.post-received.v1.e";
         String routingKey = "";
         Object payload = postOutput;
@@ -42,7 +43,7 @@ public class RabbitMQListener {
         rabbitTemplate.convertAndSend(exchange, routingKey, payload);
 
        // temperatureMonitoringService.processTemperatureReading(temperatureLogData);
-     //   Thread.sleep(Duration.ofSeconds(5));
+       Thread.sleep(Duration.ofSeconds(5));
     }
 
 }
