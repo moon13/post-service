@@ -7,6 +7,7 @@ import com.algaworks.algaposts.posts_service.common.IdGenerator;
 import com.algaworks.algaposts.posts_service.domain.model.Post;
 import com.algaworks.algaposts.posts_service.domain.model.PostId;
 import com.algaworks.algaposts.posts_service.domain.repository.PostRepository;
+import io.hypersistence.tsid.TSID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
@@ -60,6 +61,33 @@ public class PostsController {
                 .title(post.getTitle())
                 .calculatedValue(post.getCalculatedValue())
                 .build();
+    }
+
+    @GetMapping
+    public PostOutput getDetail(@PathVariable TSID postId){
+        Post postMonitoring = findByIdOrDefault(postId);
+
+
+        return PostOutput.builder()
+                .id(postMonitoring.getId().getValue())
+                .body(postMonitoring.getBody())
+                .title(postMonitoring.getTitle())
+                .author(postMonitoring.getAuthor())
+                .wordCount(postMonitoring.getWordCount())
+                .calculatedValue(postMonitoring.getCalculatedValue())
+                .build();
+    }
+
+    private Post findByIdOrDefault(TSID postId) {
+        return postRepository.findById(new PostId(postId))
+                .orElse(Post.builder()
+                        .id(new PostId(postId))
+                        .body("")
+                        .author("")
+                        .title("")
+                        .wordCount(0)
+                        .calculatedValue(Double.valueOf("0"))
+                        .build());
     }
 
 }
