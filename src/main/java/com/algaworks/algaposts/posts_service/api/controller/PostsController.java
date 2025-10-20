@@ -31,7 +31,7 @@ public class PostsController {
                 .body(input.getBody())
                 .title(input.getTitle())
                 .author(input.getAuthor())
-                .wordCount(Integer.valueOf(input.getBody().trim().length()))
+                .wordCount(0)
                 .calculatedValue(Double.valueOf(0L))
                 .build();
 

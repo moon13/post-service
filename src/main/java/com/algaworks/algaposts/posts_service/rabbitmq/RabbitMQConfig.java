@@ -16,6 +16,7 @@ import java.util.Map;
 public class RabbitMQConfig {
 
     private static final String PROCESS_POST = "text-processor-service.post-processing.v1";
+    private static final String QUEUE_POS_PROCESSAMENTO = "post-service.post-processing-result.v1.q"; // Pós PRocessamento
     public static final String QUEUE_PROCESS_POST =  PROCESS_POST + ".q";
 
 
@@ -37,6 +38,12 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue queuePosProcesamento(){
+        return QueueBuilder.durable(QUEUE_POS_PROCESSAMENTO)
+                .build();
+    }
+
+    @Bean
     public FanoutExchange exchange(){
         return ExchangeBuilder.fanoutExchange(
                 "post-processing.post-received.v1.e"
@@ -44,8 +51,13 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Binding bindingProcessTemperature(){
+    public Binding bindingProcessPost(){
         return BindingBuilder.bind(queue()).to(exchange());
+    }
+
+    @Bean
+    public Binding bindingProcessPosProcessamneto(){
+        return BindingBuilder.bind(queuePosProcesamento()).to(exchange());
     }
 
 }

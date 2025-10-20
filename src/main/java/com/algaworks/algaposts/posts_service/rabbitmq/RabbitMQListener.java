@@ -2,6 +2,10 @@ package com.algaworks.algaposts.posts_service.rabbitmq;
 
 import com.algaworks.algaposts.posts_service.api.model.PostOutput;
 
+import com.algaworks.algaposts.posts_service.common.IdGenerator;
+import com.algaworks.algaposts.posts_service.domain.model.Post;
+import com.algaworks.algaposts.posts_service.domain.model.PostId;
+import com.algaworks.algaposts.posts_service.domain.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -25,24 +29,38 @@ public class RabbitMQListener {
    // private final TemperatureMonitoringService temperatureMonitoringService;
 
     private final RabbitTemplate rabbitTemplate;
-
+    private final PostRepository postRepository;
 
     @SneakyThrows
-    @RabbitListener(queues = QUEUE_PROCESS_POST, concurrency = "2-3")
+    @RabbitListener(queues = "post-service.post-processing-result.v1.q", concurrency = "2-3")
     public void handleProcessingPost(@Payload PostOutput postOutput,
                        @Headers Map<String,Object> headers
 
     ){
-        log.info("Post updated. Postid {} Author {}", postOutput.getId(), postOutput.getAuthor());
+        log.info("POST_SERVICE FILA. Postid {} Author {}", postOutput.getId(), postOutput.getAuthor());
 
-        String fila =  "text-processor-service.post-processing.v1.q";
+       /* String fila =  "text-processor-service.post-processing.v1.q";
         String exchange = "post-processing.post-received.v1.e";
         String routingKey = "";
-        Object payload = postOutput;
+        Object payload = postOutput;*/
 
-        rabbitTemplate.convertAndSend(exchange, routingKey, payload);
+        if((!postOutput.getWordCount().equals(0))&&(!postOutput.getCalculatedValue().equals(0L))){
+            log.info("Salvando resultado da fila pos processamento.");
+            Post post =  Post.builder()
+                    .id( new PostId(postOutput.getId()))
+                    .body(postOutput.getBody())
+                    .title(postOutput.getTitle())
+                    .author(postOutput.getAuthor())
+                    .wordCount(postOutput.getWordCount())
+                    .calculatedValue(postOutput.getCalculatedValue())
+                    .build();
 
-       // temperatureMonitoringService.processTemperatureReading(temperatureLogData);
+            post = postRepository.saveAndFlush(post);
+
+        }
+
+        //rabbitTemplate.convertAndSend(exchange, routingKey, payload);
+
        Thread.sleep(Duration.ofSeconds(5));
     }
 
