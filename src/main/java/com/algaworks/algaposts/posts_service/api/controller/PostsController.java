@@ -29,7 +29,7 @@ public class PostsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PostOutput create(@RequestBody PostInput input) throws InterruptedException {
+    public PostOutput create(@RequestBody PostInput input) {
         Post post =  Post.builder()
                 .id( new PostId(IdGenerator.generateTSID()))
                 .body(input.getBody())
