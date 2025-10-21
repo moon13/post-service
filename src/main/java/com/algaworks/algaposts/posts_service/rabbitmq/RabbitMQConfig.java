@@ -15,9 +15,9 @@ import java.util.Map;
 @Configuration
 public class RabbitMQConfig {
 
-    private static final String PROCESS_POST = "text-processor-service.post-processing.v1";
-    private static final String QUEUE_POS_PROCESSAMENTO = "post-service.post-processing-result.v1.q"; // Pós PRocessamento
-    public static final String QUEUE_PROCESS_POST =  PROCESS_POST + ".q";
+    public static final String QUEUE_POST_PROCESSING = "post-processing.v1.q";
+    public static final String QUEUE_POST_RESULT = "post-processing-result.v1.q"; // Pós PRocessamento
+
 
 
     @Bean
@@ -32,32 +32,16 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue queue(){
-        return QueueBuilder.durable(QUEUE_PROCESS_POST)
+    public Queue queuePostProcessing(){
+        return QueueBuilder.durable(QUEUE_POST_PROCESSING)
                 .build();
     }
 
     @Bean
-    public Queue queuePosProcesamento(){
-        return QueueBuilder.durable(QUEUE_POS_PROCESSAMENTO)
+    public Queue queuePostProcessingResult(){
+        return QueueBuilder.durable(QUEUE_POST_RESULT)
                 .build();
     }
 
-    @Bean
-    public FanoutExchange exchange(){
-        return ExchangeBuilder.fanoutExchange(
-                "post-processing.post-received.v1.e"
-        ).build();
-    }
-
-    @Bean
-    public Binding bindingProcessPost(){
-        return BindingBuilder.bind(queue()).to(exchange());
-    }
-
-    @Bean
-    public Binding bindingProcessPosProcessamneto(){
-        return BindingBuilder.bind(queuePosProcesamento()).to(exchange());
-    }
 
 }

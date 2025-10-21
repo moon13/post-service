@@ -13,12 +13,13 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import static com.algaworks.algaposts.posts_service.rabbitmq.RabbitMQConfig.QUEUE_POST_PROCESSING;
+
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
 public class PostsController {
-
-    //private final SensorMonitoringClient sensorMonitoringClient;
+ 
     private final PostRepository postRepository;
 
     private final RabbitTemplate rabbitTemplate;
@@ -40,13 +41,11 @@ public class PostsController {
 
         PostOutput postOutput = convertToModel(post);
 
-        String fila =  "text-processor-service.post-processing.v1.q";
-        String exchange = "post-processing.post-received.v1.e";
-        String routingKey = "";
+        String exchange = "";
+        String routingKey = QUEUE_POST_PROCESSING;
         Object payload = postOutput;
 
         rabbitTemplate.convertAndSend(exchange, routingKey, payload);
-        //rabbitTemplate.convertAndSend(fila,payload);
 
         return postOutput;
 
@@ -63,7 +62,7 @@ public class PostsController {
                 .build();
     }
 
-    @GetMapping
+    @GetMapping("{postId}")
     public PostOutput getDetail(@PathVariable TSID postId){
         Post postMonitoring = findByIdOrDefault(postId);
 

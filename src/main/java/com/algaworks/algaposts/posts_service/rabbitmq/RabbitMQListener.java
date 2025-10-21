@@ -18,7 +18,8 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.Map;
 
-import static com.algaworks.algaposts.posts_service.rabbitmq.RabbitMQConfig.QUEUE_PROCESS_POST;
+import static com.algaworks.algaposts.posts_service.rabbitmq.RabbitMQConfig.QUEUE_POST_RESULT;
+
 
 
 @Slf4j
@@ -32,7 +33,7 @@ public class RabbitMQListener {
     private final PostRepository postRepository;
 
     @SneakyThrows
-    @RabbitListener(queues = "post-service.post-processing-result.v1.q", concurrency = "2-3")
+    @RabbitListener(queues =  QUEUE_POST_RESULT, concurrency = "2-3")
     public void handleProcessingPost(@Payload PostOutput postOutput,
                        @Headers Map<String,Object> headers
 
