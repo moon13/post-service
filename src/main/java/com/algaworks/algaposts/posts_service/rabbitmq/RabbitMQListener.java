@@ -27,8 +27,6 @@ import static com.algaworks.algaposts.posts_service.rabbitmq.RabbitMQConfig.QUEU
 @Component
 public class RabbitMQListener {
 
-   // private final TemperatureMonitoringService temperatureMonitoringService;
-
     private final RabbitTemplate rabbitTemplate;
     private final PostRepository postRepository;
 
@@ -39,11 +37,6 @@ public class RabbitMQListener {
 
     ){
         log.info("POST_SERVICE FILA. Postid {} Author {}", postOutput.getId(), postOutput.getAuthor());
-
-       /* String fila =  "text-processor-service.post-processing.v1.q";
-        String exchange = "post-processing.post-received.v1.e";
-        String routingKey = "";
-        Object payload = postOutput;*/
 
         if((!postOutput.getWordCount().equals(0))&&(!postOutput.getCalculatedValue().equals(0L))){
             log.info("Salvando resultado da fila pos processamento.");
@@ -59,8 +52,6 @@ public class RabbitMQListener {
             post = postRepository.saveAndFlush(post);
 
         }
-
-        //rabbitTemplate.convertAndSend(exchange, routingKey, payload);
 
        Thread.sleep(Duration.ofSeconds(5));
     }

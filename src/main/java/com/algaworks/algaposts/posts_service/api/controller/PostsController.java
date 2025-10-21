@@ -13,13 +13,15 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
+
 import static com.algaworks.algaposts.posts_service.rabbitmq.RabbitMQConfig.QUEUE_POST_PROCESSING;
 
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
 public class PostsController {
- 
+
     private final PostRepository postRepository;
 
     private final RabbitTemplate rabbitTemplate;
@@ -27,7 +29,7 @@ public class PostsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PostOutput create(@RequestBody PostInput input){
+    public PostOutput create(@RequestBody PostInput input) throws InterruptedException {
         Post post =  Post.builder()
                 .id( new PostId(IdGenerator.generateTSID()))
                 .body(input.getBody())
