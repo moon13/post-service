@@ -38,6 +38,10 @@ public class RabbitMQListener {
     ){
         log.info("POST_SERVICE FILA. Postid {} Author {}", postOutput.getId(), postOutput.getAuthor());
 
+        if (postOutput.getAuthor().equals("Luiz Antonio")){
+            throw new RuntimeException("Teste de eerro pra Fila Dead Letter");
+        }
+
         if((!postOutput.getWordCount().equals(0))&&(!postOutput.getCalculatedValue().equals(0L))){
             log.info("Salvando resultado da fila pos processamento.");
             Post post =  Post.builder()
